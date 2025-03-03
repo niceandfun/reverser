@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package reverser;
+
+option go_package = "github.com/niceandfun/reverser";
+
+service ReverserService {
+  rpc Reverse (ReverseRequest) returns (ReverseResponse);
+}
+
+message ReverseRequest {
+  string msg = 1;
+}
+
+message ReverseResponse {
+  string msg = 1;
+}
+
