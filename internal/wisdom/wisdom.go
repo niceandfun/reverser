@@ -57,7 +57,7 @@ func getRandomWisdom() (string, error) {
 	return randomQuote, nil
 }
 
-func (w *Wisdom) updateWisdom() error {
+func (w *Wisdom) UpdateWisdom() error {
 	quote, err := getRandomWisdom()
 	if err != nil {
 		return err
@@ -67,7 +67,7 @@ func (w *Wisdom) updateWisdom() error {
 	return nil
 }
 
-func (w *Wisdom) cleanWisdom() {
+func (w *Wisdom) CleanWisdom() {
 	*w = Wisdom("")
 }
 

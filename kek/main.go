@@ -9,8 +9,8 @@ import (
 func main() {
 	w := wisdom.New()
 	fmt.Println(w)
-	// w.updateWisdom()
-	// fmt.Println(w)
-	// w.cleanWisdom()
-	// fmt.Println(w)
+	w.updateWisdom()
+	fmt.Println(w)
+	w.cleanWisdom()
+	fmt.Println(w)
 }
