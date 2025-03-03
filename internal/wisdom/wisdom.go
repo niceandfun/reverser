@@ -1,6 +1,7 @@
 package wisdom
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"net/http"
@@ -13,7 +14,7 @@ const URL = "https://www.goodreads.com/quotes/tag/wisdom"
 
 type Wisdom string
 
-func (w *Wisdom) getRandomWisdom() {
+func getRandomWisdom() (string, error) {
 	// Инициализация генератора случайных чисел
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 
@@ -21,20 +22,19 @@ func (w *Wisdom) getRandomWisdom() {
 	resp, err := http.Get(URL)
 	if err != nil {
 		fmt.Println("Ошибка при отправке запроса:", err)
-		return
+		return "", err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Println("Ошибка: статус ответа", resp.StatusCode)
-		return
+		fmt.Println()
+		return "", fmt.Errorf("ошибка: статус ответа %v", resp.StatusCode)
 	}
 
 	// Парсинг HTML-контента
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
-		fmt.Println("Ошибка при парсинге HTML:", err)
-		return
+		return "", err
 	}
 
 	// Извлечение цитат
@@ -46,28 +46,37 @@ func (w *Wisdom) getRandomWisdom() {
 
 	// Проверка наличия цитат
 	if len(quotes) == 0 {
-		fmt.Println("Цитаты не найдены")
-		return
+		fmt.Println()
+		return "", errors.New("цитаты не найдены")
 	}
 
 	// Выбор случайной цитаты
 	randomIndex := rand.Intn(len(quotes))
 	randomQuote := quotes[randomIndex]
 
-	// Вывод случайной цитаты
-	fmt.Println("Случайная цитата:", randomQuote)
+	return randomQuote, nil
 }
 
-func (w *Wisdom) updateWisdom() {
-	w.getRandomWisdom()
+func (w *Wisdom) updateWisdom() error {
+	quote, err := getRandomWisdom()
+	if err != nil {
+		return err
+	}
+
+	*w = Wisdom(quote)
+	return nil
 }
 
 func (w *Wisdom) cleanWisdom() {
 	*w = Wisdom("")
 }
 
-func New() Wisdom {
+func New() *Wisdom {
 	var w Wisdom
-	w.getRandomWisdom()
-	return w
+	quote, err := getRandomWisdom()
+	if err != nil {
+		return &w
+	}
+	w = Wisdom(quote)
+	return &w
 }
