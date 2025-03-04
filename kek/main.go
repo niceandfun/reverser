@@ -3,14 +3,14 @@ package main
 import (
 	"fmt"
 
-	"github.com/niceandfun/reverser/internal/wisdom"
+	"reverser/internal/wisdom"
 )
 
 func main() {
 	w := wisdom.New()
-	fmt.Println(w)
-	w.updateWisdom()
-	fmt.Println(w)
-	w.cleanWisdom()
-	fmt.Println(w)
+	fmt.Println(*w)
+	w.UpdateWisdom()
+	fmt.Println(*w)
+	w.CleanWisdom()
+	fmt.Println(*w)
 }
