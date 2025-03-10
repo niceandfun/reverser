@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"reverser/internal/wisdom"
+	"reverser/internal/services/wisdom"
 )
 
 func main() {
