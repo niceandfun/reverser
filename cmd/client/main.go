@@ -5,10 +5,11 @@ import (
 	"log"
 	"time"
 
-	pb "reverser/proto/reverser" // Путь к вашему сгенерированному protobuf пакету
+	pb "reverser/proto/reverser"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 )
 
 func main() {
@@ -23,10 +24,20 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	response, err := client.Reverse(ctx, &pb.ReverseRequest{})
+	var headers metadata.MD
+
+	response, err := client.Reverse(
+		ctx,
+		&pb.ReverseRequest{Msg: "abcdef"},
+		grpc.Header(&headers),
+	)
 	if err != nil {
 		log.Fatalf("ошибка при вызове метода: %v", err)
 	}
 
-	log.Printf("Ответ от сервера: %v", response)
+	log.Printf("Response: %v", response)
+	log.Printf("Headers: %v", headers)
+	if wisdom := headers.Get("wisdom"); len(wisdom) > 0 {
+		log.Printf("Random wisdom: %s", wisdom[0])
+	}
 }

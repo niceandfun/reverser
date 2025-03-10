@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
@@ -15,10 +16,8 @@ const URL = "https://www.goodreads.com/quotes/tag/wisdom"
 type Wisdom string
 
 func getRandomWisdom() (string, error) {
-	// Инициализация генератора случайных чисел
 	rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	// Отправка HTTP-запроса
 	resp, err := http.Get(URL)
 	if err != nil {
 		fmt.Println("Ошибка при отправке запроса:", err)
@@ -31,26 +30,22 @@ func getRandomWisdom() (string, error) {
 		return "", fmt.Errorf("ошибка: статус ответа %v", resp.StatusCode)
 	}
 
-	// Парсинг HTML-контента
 	doc, err := goquery.NewDocumentFromReader(resp.Body)
 	if err != nil {
 		return "", err
 	}
 
-	// Извлечение цитат
 	var quotes []string
 	doc.Find(".quoteText").Each(func(i int, s *goquery.Selection) {
 		quote := s.Text()
 		quotes = append(quotes, quote)
 	})
 
-	// Проверка наличия цитат
 	if len(quotes) == 0 {
 		fmt.Println()
 		return "", errors.New("цитаты не найдены")
 	}
 
-	// Выбор случайной цитаты
 	randomIndex := rand.Intn(len(quotes))
 	randomQuote := quotes[randomIndex]
 
@@ -71,12 +66,27 @@ func (w *Wisdom) CleanWisdom() {
 	*w = Wisdom("")
 }
 
-func New() *Wisdom {
+func (w Wisdom) String() string {
+	return string(w)
+}
+
+func New() (*Wisdom, error) {
 	var w Wisdom
+
 	quote, err := getRandomWisdom()
 	if err != nil {
-		return &w
+		return nil, err
 	}
+
+	quote = formatQuote(quote)
+
 	w = Wisdom(quote)
-	return &w
+	return &w, nil
+}
+
+func formatQuote(q string) string {
+	q = strings.TrimSpace(q)
+	q = strings.ReplaceAll(q, "\n", " ")
+	q = strings.ReplaceAll(q, "\r", "")
+	return q
 }
