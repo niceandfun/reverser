@@ -5,5 +5,4 @@ deps:
 
 run-all:
 	go run cmd/server/main.go & \
-	go run cmd/client/main.go & \
-	wait
+	go run cmd/client/main.go 
