@@ -9,22 +9,7 @@
 make deps
 ```
 
-## Генерация кода из proto файлов
-```sh
-make proto
-```
-
-## Сборка проекта
-```sh
-make build
-```
-
 ## Запуск проекта
 ```sh
-make run
-```
-
-## Очистка
-```sh
-make clean
+make run-all
 ```
