@@ -21,7 +21,7 @@ func main() {
 
 	client := pb.NewReverserServiceClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	var headers metadata.MD
