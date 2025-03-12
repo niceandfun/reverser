@@ -29,7 +29,7 @@ func main() {
 
 	response, err := client.Reverse(
 		ctx,
-		&pb.ReverseRequest{Msg: "abcdef"},
+		&pb.ReverseRequest{Msg: "Rats live on no evil star"},
 		grpc.Header(&md),
 	)
 	if err != nil {
