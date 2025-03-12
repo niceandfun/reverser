@@ -4,8 +4,10 @@ import (
 	"context"
 	"log"
 	"net"
+	"strings"
 
-	"reverser/internal/services/wisdom"
+	"reverser/constants/hdrs"
+	"reverser/internal/wisdom"
 	pb "reverser/proto/reverser"
 
 	"google.golang.org/grpc"
@@ -28,24 +30,24 @@ type server struct {
 //   - error: Any error that occurred during processing
 func (s *server) Reverse(ctx context.Context, in *pb.ReverseRequest) (*pb.ReverseResponse, error) {
 	msg := in.GetMsg()
-	new_msg := ""
+	var builder strings.Builder
 
-	wsdm, err := wisdom.New()
+	wsdm := wisdom.New()
 
 	for i := len(msg) - 1; i >= 0; i-- {
-		new_msg += string(msg[i])
+		builder.WriteString(string(msg[i]))
 	}
 
-	header := metadata.New(map[string]string{
-		"wisdom": wsdm.String(),
+	headers := metadata.New(map[string]string{
+		hdrs.Wisdom: wsdm,
 	})
-	grpc.SendHeader(ctx, header)
+	grpc.SendHeader(ctx, headers)
 
-	return &pb.ReverseResponse{Msg: new_msg}, err
+	return &pb.ReverseResponse{Msg: builder.String()}, nil
 }
 
 func main() {
-	lis, err := net.Listen("tcp", ":50051")
+	lis, err := net.Listen("tcp", ":50050")
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
