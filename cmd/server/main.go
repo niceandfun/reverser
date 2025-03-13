@@ -32,7 +32,11 @@ func (s *server) Reverse(ctx context.Context, in *pb.ReverseRequest) (*pb.Revers
 	msg := in.GetMsg()
 	var builder strings.Builder
 
-	wsdm := wisdom.New()
+	wsdm, err := wisdom.New()
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
 
 	for i := len(msg) - 1; i >= 0; i-- {
 		builder.WriteString(string(msg[i]))
@@ -41,6 +45,7 @@ func (s *server) Reverse(ctx context.Context, in *pb.ReverseRequest) (*pb.Revers
 	headers := metadata.New(map[string]string{
 		hdrs.Wisdom: wsdm,
 	})
+
 	grpc.SendHeader(ctx, headers)
 
 	return &pb.ReverseResponse{Msg: builder.String()}, nil

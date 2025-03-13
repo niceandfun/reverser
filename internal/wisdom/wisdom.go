@@ -1,9 +1,6 @@
 package wisdom
 
-import (
-	"math/rand"
-	"time"
-)
+import "errors"
 
 var Wisdoms = map[int]string{
 	1:  "The fool doth think he is wise, but the wise man knows himself to be a fool. ― William Shakespeare, As You Like It ",
@@ -28,11 +25,15 @@ var Wisdoms = map[int]string{
 	20: "The unexamined life is not worth living. ― Socrates ",
 }
 
-func New() string {
-	return Wisdoms[randomNumber()]
-}
+func New() (string, error) {
+	if len(Wisdoms) == 0 {
+		return "", errors.New("wisdoms is empty")
+	}
 
-func randomNumber() int {
-	seed := time.Now().UnixNano()
-	return rand.New(rand.NewSource(seed)).Intn(len(Wisdoms))
+	wisdom := ""
+	for _, wisdom = range Wisdoms {
+		break
+	}
+
+	return wisdom, nil
 }
